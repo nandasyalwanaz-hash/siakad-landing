@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIAKAD — Sistem Informasi Akademik Terpadu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep: #0A1B22;
+    --bg-mid: #123A44;
+    --bg-glow: #2F6E73;
+    --bg-light: #E9EEEA;
+    --ink-dark: #0F2027;
+    --ink-dark-soft: #48605E;
+    --ink-light: #EAF4F2;
+    --ink-light-soft: #A9C2C0;
+    --gold: #D9C18B;
+    --glass-bg: rgba(255,255,255,0.06);
+    --glass-bg-light: rgba(255,255,255,0.55);
+    --glass-border: rgba(255,255,255,0.16);
+    --glass-border-light: rgba(15,32,39,0.10);
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; font-family:'Manrope', sans-serif; background: var(--bg-deep); color: var(--ink-light); }
+  h1,h2,h3{ font-family:'Cormorant Garamond', serif; margin:0; font-weight:500; }
+  em{ font-style:italic; color: var(--gold); }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 32px; position:relative; z-index:2; }
+  code{ font-family:'IBM Plex Mono', monospace; background: rgba(0,0,0,0.15); padding:1px 6px; border-radius:4px; }
+
+  .band{ position:relative; padding:110px 0; overflow:hidden; }
+  .band-dark{ background: linear-gradient(160deg, var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-deep) 100%); color: var(--ink-light); }
+  .band-light{ background: var(--bg-light); color: var(--ink-dark); }
+  .band-dark .soft{ color: var(--ink-light-soft); }
+  .band-light .soft{ color: var(--ink-dark-soft); }
+
+  .glow{ position:absolute; border-radius:50%; filter: blur(90px); opacity:0.55; pointer-events:none; z-index:0; }
+  .glow-a{ width:520px; height:520px; background: radial-gradient(circle, #3F8C8F, transparent 70%); top:-160px; right:-120px; }
+  .glow-b{ width:420px; height:420px; background: radial-gradient(circle, #1D4A52, transparent 70%); bottom:-140px; left:-100px; }
+
+  .curve{ position:absolute; top:-1px; left:0; width:100%; height:90px; line-height:0; z-index:1; }
+  .curve svg{ width:100%; height:100%; display:block; }
+
+  header{ position:sticky; top:0; z-index:100; background: rgba(10,27,34,0.75); backdrop-filter: blur(10px); border-bottom:1px solid rgba(255,255,255,0.08); }
+  nav{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1120px; margin:0 auto; }
+  .brand{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.5rem; letter-spacing:0.02em; color:var(--ink-light); }
+  .navlinks{ display:flex; gap:30px; font-size:0.85rem; letter-spacing:0.02em; }
+  .navlinks a{ color: var(--ink-light-soft); transition:.15s; }
+  .navlinks a:hover{ color: var(--gold); }
+  .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:999px; font-weight:600; font-size:0.85rem; border:1px solid var(--glass-border); transition:.2s; }
+  .btn-solid{ background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
+  .btn-solid:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-ghost-dark{ color: var(--ink-light); }
+  .btn-ghost-dark:hover{ background: rgba(255,255,255,0.08); }
+  .btn-ghost-light{ color: var(--ink-dark); border-color: var(--glass-border-light); }
+  .btn-ghost-light:hover{ background: rgba(15,32,39,0.06); }
+  .btn-solid-light{ background: var(--ink-dark); color: var(--ink-light); border-color: var(--ink-dark); }
+  .btn-solid-light:hover{ filter: brightness(1.2); }
+
+  .hero{ padding-top:130px; padding-bottom:90px; text-align:center; }
+  .eyebrow{ display:inline-flex; font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color: var(--gold); border:1px solid rgba(217,193,139,0.4); padding:6px 16px; border-radius:999px; margin-bottom:26px; }
+  .hero h1{ font-size:3.6rem; line-height:1.12; letter-spacing:-0.01em; max-width:820px; margin:0 auto; }
+  .hero p.lead{ max-width:560px; margin:26px auto 38px; font-size:1.06rem; color: var(--ink-light-soft); }
+  .hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:56px; }
+  .pill-stats{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .pill-stat{ background: var(--glass-bg); border:1px solid var(--glass-border); padding:10px 20px; border-radius:999px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; letter-spacing:0.03em; }
+  .pill-stat b{ color: var(--gold); }
+
+  .section-head{ max-width:640px; margin:0 auto 52px; text-align:center; }
+  .section-head .eyebrow{ margin-bottom:18px; }
+  .band-light .eyebrow{ color:#7A6222; border-color: rgba(122,98,34,0.35); }
+  .section-head h2{ font-size:2.4rem; }
+  .section-head p{ margin-top:16px; font-size:1rem; }
+
+  .grid{ display:grid; gap:20px; }
+  .grid-2{ grid-template-columns: repeat(2,1fr); }
+  .grid-3{ grid-template-columns: repeat(3,1fr); }
+  .grid-4{ grid-template-columns: repeat(4,1fr); }
+  .glass{ background: var(--glass-bg); border:1px solid var(--glass-border); border-radius:16px; padding:26px 24px; backdrop-filter: blur(6px); }
+  .band-light .glass{ background: var(--glass-bg-light); border-color: var(--glass-border-light); }
+  .glass h3{ font-size:1.2rem; margin-bottom:10px; font-style:italic; }
+  .glass p{ font-size:0.92rem; margin:0; }
+  .glass .tag{ font-family:'IBM Plex Mono', monospace; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; opacity:0.6; display:block; margin-bottom:10px; }
+
+  .step-num{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:2.6rem; color: var(--gold); line-height:1; margin-bottom:14px; display:block; }
+
+  .pill-row{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+  .pill{ font-family:'IBM Plex Mono', monospace; font-size:0.82rem; padding:10px 20px; border-radius:999px; border:1px solid var(--glass-border); background: var(--glass-bg); }
+
+  .flow-line{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:10px; font-family:'IBM Plex Mono', monospace; font-size:0.85rem; }
+  .flow-node{ background: var(--glass-bg); border:1px solid var(--glass-border); padding:12px 18px; border-radius:10px; }
+  .flow-arrow{ color: var(--gold); font-size:1.1rem; }
+
+  .list-plain{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+  .list-plain li{ padding-left:20px; position:relative; font-size:0.94rem; }
+  .list-plain li::before{ content:"—"; position:absolute; left:0; color: var(--gold); }
+
+  .api-grid{ display:grid; grid-template-columns:1.1fr 1fr; gap:28px; }
+  .endpoint-table{ width:100%; border-collapse:collapse; font-family:'IBM Plex Mono', monospace; font-size:0.82rem; }
+  .endpoint-table td{ padding:9px 8px; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .m-get{ color:#8FD6B4; font-weight:600; } .m-post{ color:#E8C27B; font-weight:600; } .m-put{ color:#8CB9E8; font-weight:600; } .m-del{ color:#E89393; font-weight:600; }
+  .code-card{ background: rgba(0,0,0,0.25); border:1px solid var(--glass-border); border-radius:12px; padding:20px; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; white-space:pre; overflow-x:auto; color: var(--ink-light-soft); }
+
+  .install-steps{ counter-reset: step; display:flex; flex-direction:column; gap:16px; max-width:640px; margin:0 auto; padding:0; }
+  .install-steps li{ list-style:none; display:flex; gap:16px; align-items:flex-start; }
+  .install-steps li::before{ counter-increment: step; content: counter(step); font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.4rem; color: var(--gold); width:34px; flex-shrink:0; }
+
+  table.req{ width:100%; border-collapse:collapse; margin-top:10px; }
+  table.req th, table.req td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--glass-border-light); font-size:0.9rem; }
+  table.req th{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; opacity:0.6; }
+
+  .cta-band{ text-align:center; }
+  .cta-band h2{ font-size:2.6rem; max-width:640px; margin:0 auto; }
+  .cta-band p{ max-width:520px; margin:18px auto 34px; }
+  .cta-row{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+  footer{ padding:70px 0 40px; }
+  .footer-grid{ display:grid; grid-template-columns:1.1fr 0.8fr 1fr 0.8fr; gap:32px; margin-bottom:44px; }
+  .footer-brand p{ color: var(--ink-light-soft); font-size:0.9rem; max-width:300px; margin-top:12px; }
+  .footer-col h4{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color: var(--gold); margin-bottom:16px; }
+  .footer-col a, .footer-col p{ display:block; color: var(--ink-light-soft); font-size:0.9rem; margin-bottom:8px; }
+  .footer-bottom{ border-top:1px solid rgba(255,255,255,0.1); padding-top:22px; font-size:0.8rem; color: var(--ink-light-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+
+  @media (max-width:900px){
+    .hero h1{ font-size:2.4rem; }
+    .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
+    .api-grid{ grid-template-columns:1fr; }
+    .navlinks{ display:none; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .band{ padding:80px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand">SIAKAD</div>
+    <div class="navlinks">
+      <a href="#tentang">Tentang</a>
+      <a href="#alur">Alur</a>
+      <a href="#api">API</a>
+      <a href="#instalasi">Instalasi</a>
+      <a href="#kontak">Kontak</a>
+    </div>
+    <a href="#akses" class="btn btn-solid">Lihat Demo</a>
+  </nav>
+</header>
+
+<section class="band band-dark hero" id="tentang">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="wrap">
+    <span class="eyebrow">Sistem Informasi Akademik · UAS Web 2</span>
+    <h1>Akademik yang <em>Terhubung</em>,<br>Tercatat, Terverifikasi.</h1>
+    <p class="lead">SIAKAD menyatukan data mahasiswa, dosen, mata kuliah, KRS, nilai, absensi, dan jadwal dalam satu sistem terpusat — dilengkapi REST API dan evaluasi performa berbasis logika fuzzy, untuk admin, dosen, dan mahasiswa.</p>
+    <div class="hero-ctas">
+      <a href="#api" class="btn btn-solid">Lihat Dokumentasi API</a>
+      <a href="#alur" class="btn btn-ghost-dark">Cara Kerja</a>
+    </div>
+    <div class="pill-stats">
+      <span class="pill-stat"><b>9</b> Modul Data</span>
+      <span class="pill-stat"><b>45</b> Endpoint API</span>
+      <span class="pill-stat">REST · JSON</span>
+      <span class="pill-stat">Fuzzy Mamdani</span>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#E9EEEA"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Latar Belakang &amp; Keunggulan</span>
+      <h2>Mengapa SIAKAD</h2>
+      <p>Ditujukan untuk admin akademik, dosen, dan mahasiswa — menggantikan pencatatan manual yang tersebar dengan satu sistem yang cepat, aman, dan bisa diakses lintas platform.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="glass"><span class="tag">Performa</span><h3>Cepat</h3><p>API REST dengan response JSON ringan, siap dikonsumsi web maupun aplikasi mobile.</p></div>
+      <div class="glass"><span class="tag">Validasi</span><h3>Aman</h3><p>Validasi input di setiap endpoint, pengecekan relasi data sebelum disimpan ke database.</p></div>
+      <div class="glass"><span class="tag">Jangkauan</span><h3>Multi-Platform</h3><p>Dapat diakses lewat web browser maupun aplikasi Android berbasis WebView.</p></div>
+      <div class="glass"><span class="tag">Analitik</span><h3>Cerdas</h3><p>Evaluasi performa mahasiswa otomatis menggunakan metode Fuzzy Mamdani.</p></div>
+    </div>
+
+    <div class="section-head" style="margin-top:70px;">
+      <span class="eyebrow">Fitur Utama</span>
+      <h2>Dua Belas Fitur Inti</h2>
+      <p>Mendukung pengelolaan data akademik secara terintegrasi, dari autentikasi sampai evaluasi otomatis.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="glass"><span class="tag">Akses</span><h3>Autentikasi Login</h3><p>Login dengan pembagian hak akses berdasarkan role: Admin, Operator, Dosen, dan Mahasiswa.</p></div>
+      <div class="glass"><span class="tag">Akses</span><h3>Dashboard Berdasarkan Role</h3><p>Tiap pengguna memperoleh tampilan dashboard berbeda sesuai hak akses dan kebutuhan informasinya.</p></div>
+      <div class="glass"><span class="tag">Master</span><h3>Manajemen Mahasiswa</h3><p>Mengelola data mahasiswa beserta informasi akademiknya.</p></div>
+      <div class="glass"><span class="tag">Master</span><h3>Manajemen Dosen</h3><p>Mengelola data dosen yang digunakan dalam proses perkuliahan.</p></div>
+      <div class="glass"><span class="tag">Master</span><h3>Manajemen Mata Kuliah</h3><p>Mengelola data mata kuliah beserta SKS dan dosen pengampu.</p></div>
+      <div class="glass"><span class="tag">Akademik</span><h3>Manajemen KRS</h3><p>Mengelola pengambilan mata kuliah oleh mahasiswa tiap semester.</p></div>
+      <div class="glass"><span class="tag">Akademik</span><h3>Manajemen Jadwal Kuliah</h3><p>Mengatur jadwal berdasarkan mata kuliah, dosen, ruang, dan waktu.</p></div>
+      <div class="glass"><span class="tag">Evaluasi</span><h3>Manajemen Nilai</h3><p>Mengelola nilai mahasiswa pada setiap mata kuliah.</p></div>
+      <div class="glass"><span class="tag">Evaluasi</span><h3>Manajemen Absensi</h3><p>Mengelola data kehadiran mahasiswa selama perkuliahan.</p></div>
+      <div class="glass"><span class="tag">Evaluasi</span><h3>Evaluasi Fuzzy</h3><p>Menyimpan hasil evaluasi akademik menggunakan metode Fuzzy Mamdani.</p></div>
+      <div class="glass"><span class="tag">Keamanan</span><h3>Manajemen Hak Akses</h3><p>Mengatur hak akses pengguna berdasarkan role melalui mekanisme RBAC.</p></div>
+      <div class="glass"><span class="tag">Integrasi</span><h3>REST API</h3><p>Layanan API berbasis JSON yang dapat digunakan aplikasi web maupun mobile.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-dark" id="alur">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#0A1B22"/></svg></div>
+  <div class="glow glow-a" style="top:auto;bottom:-160px;right:-100px;"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Alur Penggunaan</span>
+      <h2>Bagaimana SIAKAD Bekerja</h2>
+      <p class="soft">Empat tahap sederhana dari login sampai evaluasi otomatis.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="glass"><span class="step-num">01</span><h3>Login &amp; Dashboard</h3><p>Masuk sesuai role — admin, dosen, atau mahasiswa.</p></div>
+      <div class="glass"><span class="step-num">02</span><h3>Kelola Data Master</h3><p>Admin mencatat mahasiswa, dosen, dan mata kuliah.</p></div>
+      <div class="glass"><span class="step-num">03</span><h3>Proses Akademik</h3><p>KRS, jadwal, absensi, dan nilai berjalan tiap semester.</p></div>
+      <div class="glass"><span class="step-num">04</span><h3>Evaluasi Fuzzy</h3><p>Kategori performa mahasiswa dihitung otomatis.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#E9EEEA"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">5. Role Pengguna</span>
+      <h2>Empat Peran, Empat Dashboard</h2>
+      <p>SIAKAD menerapkan Role Based Access Control (RBAC) menggunakan tabel <code>hak_akses</code> dan middleware <code>CekHakAkses</code>. Setelah login, pengguna diarahkan ke dashboard sesuai role: Admin, Operator, Dosen, atau Mahasiswa.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="glass">
+        <span class="tag">Role · 01 — Akses Tertinggi</span>
+        <h3>Admin</h3>
+        <p>Memiliki izin View, Create, Edit, dan Delete pada seluruh modul: dashboard, mahasiswa, dosen, mata kuliah, KRS, jadwal kuliah, absensi, nilai, fuzzy hasil, hingga hak akses pengguna. Bertanggung jawab atas seluruh data akademik dan konfigurasi sistem.</p>
+      </div>
+      <div class="glass">
+        <span class="tag">Role · 02 — Administrasi</span>
+        <h3>Operator</h3>
+        <p>Dashboard menampilkan ringkasan jumlah mahasiswa, dosen, mata kuliah, KRS, dan aktivitas akademik terbaru. Operator membantu proses administrasi akademik selama operasional sistem berlangsung.</p>
+      </div>
+      <div class="glass">
+        <span class="tag">Role · 03 — Pengajaran</span>
+        <h3>Dosen</h3>
+        <p>Dapat melihat data mahasiswa, mata kuliah, KRS, dan jadwal kuliah; menambah &amp; memperbarui absensi, nilai, serta hasil evaluasi Fuzzy. Dashboard menampilkan total mata kuliah diampu, total mahasiswa, mahasiswa yang belum bernilai, dan jadwal mengajar hari ini. Dosen tidak memiliki hak hapus data maupun kelola hak akses.</p>
+      </div>
+      <div class="glass">
+        <span class="tag">Role · 04 — Mahasiswa</span>
+        <h3>Mahasiswa</h3>
+        <p>Dashboard menampilkan total SKS diambil, total mata kuliah, IPK, persentase kehadiran, jadwal hari ini, dan nilai terbaru — otomatis berdasarkan akun yang login. Mahasiswa hanya dapat melihat data akademiknya sendiri, tanpa izin tambah, ubah, atau hapus.</p>
+      </div>
+    </div>
+
+    <div class="glass" style="margin-top:24px; border-left:4px solid #A63D2F;">
+      <span class="tag" style="color:#A63D2F;">Catatan Implementasi</span>
+      <p style="margin-top:6px;"><code>RoleSeeder</code> mendefinisikan hak akses tiap role secara detail dan terbatas untuk Operator. Namun pada middleware <code>CekHakAkses</code> terdapat baris <code>if ($role === 'Operator') { return $next($request); }</code> — artinya pada implementasi yang berjalan, Operator justru dapat mengakses seluruh modul tanpa pembatasan tambahan, berbeda dari yang didefinisikan di seeder. Laporan ini mengikuti perilaku aplikasi yang sesungguhnya berjalan, bukan hanya isi seeder.</p>
+    </div>
+
+    <div class="section-head" style="margin-top:60px;">
+      <span class="eyebrow">5.2 Mekanisme Hak Akses</span>
+      <h2>Empat Jenis Permission</h2>
+      <p>Setiap request diperiksa <code>CekHakAkses</code> berdasarkan role, modul, dan jenis aksi. Jika tidak memiliki izin, sistem menolak akses dan menampilkan pesan bahwa pengguna tidak berhak atas modul tersebut.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="glass"><h3>View</h3><p>Izin untuk melihat data.</p></div>
+      <div class="glass"><h3>Create</h3><p>Izin untuk menambahkan data.</p></div>
+      <div class="glass"><h3>Edit</h3><p>Izin untuk memperbarui data.</p></div>
+      <div class="glass"><h3>Delete</h3><p>Izin untuk menghapus data.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-dark">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#0A1B22"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">6. Modul Sistem</span>
+      <h2>Sebelas Modul Terhubung</h2>
+    </div>
+    <table class="req" style="color:inherit;">
+      <tr><th>Modul</th><th>Deskripsi</th></tr>
+      <tr><td>Login &amp; Autentikasi</td><td class="soft">Proses autentikasi pengguna berdasarkan akun terdaftar.</td></tr>
+      <tr><td>Dashboard</td><td class="soft">Ringkasan informasi akademik sesuai role pengguna.</td></tr>
+      <tr><td>Mahasiswa</td><td class="soft">Pengelolaan data mahasiswa beserta informasi akademiknya.</td></tr>
+      <tr><td>Dosen</td><td class="soft">Pengelolaan data dosen.</td></tr>
+      <tr><td>Mata Kuliah</td><td class="soft">Pengelolaan data mata kuliah dalam proses pembelajaran.</td></tr>
+      <tr><td>KRS</td><td class="soft">Pengelolaan pengambilan mata kuliah mahasiswa.</td></tr>
+      <tr><td>Jadwal Kuliah</td><td class="soft">Pengaturan jadwal perkuliahan.</td></tr>
+      <tr><td>Nilai</td><td class="soft">Pengelolaan nilai mahasiswa.</td></tr>
+      <tr><td>Absensi</td><td class="soft">Pengelolaan kehadiran mahasiswa.</td></tr>
+      <tr><td>Fuzzy Hasil</td><td class="soft">Penyimpanan hasil evaluasi metode Fuzzy Mamdani.</td></tr>
+      <tr><td>Hak Akses</td><td class="soft">Pengaturan hak akses pengguna berdasarkan role.</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="band band-dark">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#0A1B22"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Teknologi</span>
+      <h2>Dibangun di Atas Fondasi yang Kuat</h2>
+    </div>
+    <div class="pill-row">
+      <span class="pill">Laravel 13</span>
+      <span class="pill">MySQL</span>
+      <span class="pill">Blade + Bootstrap</span>
+      <span class="pill">REST API · JSON</span>
+      <span class="pill">Flutter (WebView)</span>
+      <span class="pill">Fuzzy Mamdani Engine</span>
+      <span class="pill">Ngrok Tunnel</span>
+    </div>
+
+    <div class="section-head" style="margin-top:70px;">
+      <span class="eyebrow">8. Arsitektur Sistem</span>
+      <h2>Model–View–Controller (MVC)</h2>
+      <p class="soft">Sistem menggunakan arsitektur MVC yang diterapkan oleh framework Laravel.</p>
+    </div>
+    <div class="flow-line">
+      <span class="flow-node">Client (Web / Flutter WebView)</span><span class="flow-arrow">→</span>
+      <span class="flow-node">Laravel Routes</span><span class="flow-arrow">→</span>
+      <span class="flow-node">Controller</span><span class="flow-arrow">→</span>
+      <span class="flow-node">Middleware CekHakAkses</span><span class="flow-arrow">→</span>
+      <span class="flow-node">FormRequest (Validasi)</span><span class="flow-arrow">→</span>
+      <span class="flow-node">Model (Eloquent ORM)</span><span class="flow-arrow">→</span>
+      <span class="flow-node">Database MySQL</span><span class="flow-arrow">→</span>
+      <span class="flow-node">API Resource / Blade View</span><span class="flow-arrow">→</span>
+      <span class="flow-node">Response ke Client</span>
+    </div>
+    <p class="soft" style="max-width:680px;margin:24px auto 0;text-align:center;font-size:0.92rem;">Pada setiap request, sistem melakukan autentikasi pengguna terlebih dahulu. Setelah login, middleware <code>CekHakAkses</code> memeriksa izin pengguna terhadap modul yang diakses. Jika memiliki izin, controller memproses data melalui model Eloquent dan mengembalikan hasil berupa halaman Blade maupun response JSON untuk REST API.</p>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#E9EEEA"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Struktur Database</span>
+      <h2>Sembilan Entitas, Saling Terhubung</h2>
+    </div>
+    <div class="grid grid-2">
+      <div class="glass">
+        <h3>Gambaran Umum</h3>
+        <ul class="list-plain">
+          <li>9 tabel entitas utama + tabel users</li>
+          <li>Relasi One-to-Many dan One-to-One</li>
+          <li>Foreign key terhubung antar modul akademik</li>
+        </ul>
+      </div>
+      <div class="glass">
+        <h3>Relasi Utama</h3>
+        <ul class="list-plain">
+          <li>Dosen → Mata Kuliah &amp; Jadwal Kuliah</li>
+          <li>Mahasiswa → KRS &amp; Absensi</li>
+          <li>Mata Kuliah → KRS, Jadwal, Absensi</li>
+          <li>KRS → Nilai &amp; Fuzzy Hasil (One-to-One)</li>
+          <li>Hak Akses → Users</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-dark" id="api">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#0A1B22"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">10. Dokumentasi API</span>
+      <h2>Satu Pola untuk Sembilan Entitas</h2>
+      <p class="soft">Base URL: <code>/api/v1</code> — semua entitas mengikuti pola CRUD yang sama.</p>
+      <p class="soft" style="margin-top:10px;">Seluruh endpoint API menggunakan format JSON dan menerapkan validasi menggunakan Laravel FormRequest. Setiap response dikembalikan dalam format yang konsisten sehingga mudah digunakan oleh aplikasi web maupun aplikasi mobile.</p>
+    </div>
+    <div class="api-grid">
+      <div class="glass">
+        <h3>Contoh: Entitas Mahasiswa</h3>
+        <table class="endpoint-table">
+          <tr><td class="m-get">GET</td><td>/mahasiswa</td><td class="soft">Daftar mahasiswa</td></tr>
+          <tr><td class="m-post">POST</td><td>/mahasiswa</td><td class="soft">Tambah mahasiswa</td></tr>
+          <tr><td class="m-get">GET</td><td>/mahasiswa/{id}</td><td class="soft">Detail mahasiswa</td></tr>
+          <tr><td class="m-put">PUT</td><td>/mahasiswa/{id}</td><td class="soft">Perbarui data</td></tr>
+          <tr><td class="m-del">DELETE</td><td>/mahasiswa/{id}</td><td class="soft">Hapus data</td></tr>
+        </table>
+        <p class="soft" style="margin-top:14px;font-size:0.85rem;">Pola sama berlaku untuk: dosen, mata-kuliah, krs, nilai, absensi, jadwal-kuliah, hak-akses, fuzzy-hasil.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:12px;">Contoh Response</h3>
+        <div class="code-card">{
+  "success": true,
+  "message": "Mahasiswa berhasil ditambahkan.",
+  "data": {
+    "id": 1,
+    "nim": "2101012345",
+    "nama": "Siti Aminah",
+    "prodi": "Sistem Informasi"
+  }
+}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light" id="instalasi">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#E9EEEA"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Langkah Instalasi</span>
+      <h2>Menjalankan SIAKAD di Lokal</h2>
+    </div>
+    <ul class="install-steps">
+      <li>Clone/extract project ke folder Laragon.</li>
+      <li>Install dependency dengan <code>composer install</code>.</li>
+      <li>Salin <code>.env.example</code> menjadi <code>.env</code>, sesuaikan koneksi database.</li>
+      <li>Migrasi database dengan <code>php artisan migrate</code>.</li>
+      <li>Jalankan server dengan <code>php artisan serve</code>.</li>
+      <li>Verifikasi di <code>http://127.0.0.1:8000</code>.</li>
+    </ul>
+
+    <div class="section-head" style="margin-top:70px;">
+      <span class="eyebrow">Kebutuhan Sistem</span>
+      <h2>Spesifikasi Minimum</h2>
+    </div>
+    <table class="req">
+      <tr><th>Komponen</th><th>Minimum</th><th>Rekomendasi</th></tr>
+      <tr><td>PHP</td><td>8.1+</td><td>8.2+</td></tr>
+      <tr><td>MySQL</td><td>5.7+</td><td>8.0+</td></tr>
+      <tr><td>RAM</td><td>512 MB</td><td>1 GB+</td></tr>
+      <tr><td>Server Lokal</td><td>Laragon / XAMPP</td><td>Laragon (Windows)</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="band band-dark">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#0A1B22"/></svg></div>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">13. Keamanan</span>
+      <h2>Diuji dan Diverifikasi Menyeluruh</h2>
+    </div>
+    <div class="grid grid-2">
+      <ul class="list-plain">
+        <li>Autentikasi menggunakan sistem login Laravel</li>
+        <li>Middleware <code>CekHakAkses</code> untuk memverifikasi permission setiap pengguna</li>
+        <li>Validasi request menggunakan FormRequest</li>
+      </ul>
+      <ul class="list-plain">
+        <li>Penggunaan Eloquent ORM untuk meminimalkan risiko SQL Injection</li>
+        <li>Hak akses disimpan pada tabel <code>hak_akses</code> sehingga tiap role hanya mengakses modul yang diizinkan</li>
+      </ul>
+    </div>
+
+    <div class="section-head" style="margin-top:70px;">
+      <span class="eyebrow">14. Pengujian</span>
+      <h2>Diverifikasi Menyeluruh</h2>
+    </div>
+    <div class="grid grid-2">
+      <ul class="list-plain">
+        <li>Pengujian login berdasarkan role pengguna</li>
+        <li>Pengujian hak akses menggunakan middleware <code>CekHakAkses</code></li>
+        <li>Pengujian operasi CRUD pada seluruh modul sistem</li>
+      </ul>
+      <ul class="list-plain">
+        <li>Pengujian endpoint REST API menggunakan Postman</li>
+        <li>Pengujian validasi input menggunakan Laravel FormRequest</li>
+        <li>Pengujian akses aplikasi melalui browser dan aplikasi Android berbasis Flutter WebView</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light cta-band" id="akses">
+  <div class="curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,90 C360,10 1080,10 1440,90 L1440,0 L0,0 Z" fill="#E9EEEA"/></svg></div>
+  <div class="wrap">
+    <span class="eyebrow">15. Kesimpulan</span>
+    <h2>Satu Sistem, Seluruh Urusan Akademik.</h2>
+    <p>SIAKAD berhasil dikembangkan sebagai Sistem Informasi Akademik berbasis Laravel yang menerapkan arsitektur MVC, Role Based Access Control (RBAC), REST API, dan metode Fuzzy Mamdani untuk evaluasi akademik mahasiswa. Sistem menyediakan dashboard yang berbeda untuk setiap role (Admin, Operator, Dosen, dan Mahasiswa), mendukung pengelolaan data akademik secara terintegrasi, serta dapat diakses melalui aplikasi web maupun aplikasi Android berbasis Flutter WebView. Pengujian menunjukkan bahwa fitur CRUD, autentikasi, hak akses, validasi data, dan layanan REST API berjalan sesuai kebutuhan sistem.</p>
+    <div class="cta-row">
+      <a href="https://sliver-disband-egomaniac.ngrok-free.dev" target="_blank" rel="noopener" class="btn btn-solid-light">Buka Web App</a>
+      <a href="https://drive.google.com/file/d/1_e3WxXcNO1Dd2ncqC71JTsAkppIo4VnP/view?usp=sharing" target="_blank" rel="noopener" class="btn btn-ghost-light">Unduh APK</a>
+      <a href="https://nandasyalwanaz-hash.github.io/siakad-api-report/" target="_blank" rel="noopener" class="btn btn-ghost-light">Koleksi Postman</a>
+    </div>
+  </div>
+</section>
+
+<footer class="band-dark" id="kontak">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand">SIAKAD</div>
+        <p>Sistem Informasi Akademik — dikembangkan sebagai proyek Ujian Akhir Semester mata kuliah Web 2.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tautan</h4>
+        <a href="#tentang">Tentang</a>
+        <a href="#alur">Alur Penggunaan</a>
+        <a href="#api">Dokumentasi API</a>
+      </div>
+      <div class="footer-col">
+        <h4>Repository</h4>
+        <a href="https://github.com/nandasyalwanaz-hash/siakadproject.git" target="_blank" rel="noopener">Source Code Web (Laravel)</a>
+        <a href="https://github.com/nandasyalwanaz-hash/siakad_app" target="_blank" rel="noopener">Source Code Mobile (Flutter)</a>
+      </div>
+      <div class="footer-col">
+        <h4>Kontak</h4>
+        <p>Nama: (isi nama kamu)</p>
+        <p>NIM: (isi NIM kamu)</p>
+        <p>Kelas: (isi kelas kamu)</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SIAKAD — Proyek UAS Web 2.</span>
+      <span>Dibangun dengan Laravel &amp; Flutter.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
